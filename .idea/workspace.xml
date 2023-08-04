@@ -5,12 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a4dd38b1-2cb2-497f-962c-681feac40bc3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/MT_Goo/accounts/serializers.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MT_Goo/accounts/urls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MT_Goo/lodging/serializers.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MT_Goo/lodging/testData.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MT_Goo/lodging/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MT_Goo/MT_Goo/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/MT_Goo/MT_Goo/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MT_Goo/MT_Goo/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/MT_Goo/MT_Goo/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MT_Goo/accounts/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/MT_Goo/accounts/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MT_Goo/accounts/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/MT_Goo/accounts/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MT_Goo/accounts/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MT_Goo/accounts/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/MT_Goo/accounts/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MT_Goo/lodging/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/MT_Goo/lodging/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MT_Goo/lodging/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/MT_Goo/lodging/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,9 +42,15 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "develop"
+    "git-widget-placeholder": "feature/lodging",
+    "last_opened_file_path": "/Users/dohun/대학/동아리/멋쟁이사자처럼/중앙해커톤/MT_Goo/lodging"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/MT_Goo/lodging" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -51,5 +61,16 @@
       <updated>1690797749844</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
