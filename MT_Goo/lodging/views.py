@@ -1,25 +1,3 @@
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import status
-# from .models import lodgingMain
-# from .serializers import lodgingCreateSerializer, lodgingSerializer
-
-
-# class CreateLodgingView(APIView):
-#     def post(self, request, format=None):
-#         serializer = lodgingCreateSerializer(data=request.data)
-
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-# class ListAllLodgingView(APIView):
-#     def get(self, request, format=None):
-#         lodgings = lodgingMain.objects.all()
-#         serializer = lodgingSerializer(lodgings, many=True)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
-
 from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
@@ -35,11 +13,13 @@ class CreateLodgingView(APIView):
         serializer = lodgingCreateSerializer(data=request.data)
         print(request.data)
         if serializer.is_valid():
-            serializer.save()
+            lodging = serializer.save()
+            photos = request.FILES.getlist('photos')
+            for photo in photos:
+                lodgingPhoto.objects.create(lodging=lodging, image = photo)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class lodgingMainView(APIView):
     def get(self, request, format=None):
@@ -65,9 +45,6 @@ class lodgingDetailView(APIView):
         except lodgingMain.DoesNotExist:
             return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
 
-
-
-
 class CreateReviewView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
 
@@ -75,8 +52,6 @@ class CreateReviewView(APIView):
         serializer = reviewCreateSerializer(data=request.data)
         if serializer.is_valid():
             lodging_id = request.data.get('lodging_id')  # 숙박 정보의 pk를 요청 데이터에서 가져옵니다.
-            print(request.data)
-            print(request.headers)
             try:
                 lodging = lodgingMain.objects.get(pk=lodging_id)
                 # 사용자의 세션에서 인증 정보를 확인하고 user에 할당합니다.

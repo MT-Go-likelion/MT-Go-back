@@ -4,8 +4,8 @@ from .models import lodgingMain, lodgingPhoto, review, priceByDate
 class lodgingPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = lodgingPhoto
-        fields = '__all__'  # Assuming you want to serialize all fields for lodgingPhoto
-
+        fields = '__all__'
+    
 class lodgingMainSerializer(serializers.ModelSerializer):
     # 평균 점수를 계산하여 평균_score 필드에 추가
     avgScore = serializers.SerializerMethodField()
@@ -76,23 +76,21 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
 
 
 class lodgingCreateSerializer(serializers.ModelSerializer):
-    photos = lodgingPhotoSerializer(many=True, required=False)
+    # photos = lodgingPhotoSerializer(many=True)
 
     class Meta:
         model = lodgingMain
-        fields = '__all__'  # 누락된 필드가 없도록 모든 필드를 포함합니다.
+        fields = '__all__'
 
-    def create(self, validated_data):
-        print(validated_data)
-        # photos 데이터를 추출하고 lodgingMain 객체 생성 시에 함께 처리합니다.
-        photos_data = validated_data.pop('photos', [])
-        lodging = lodgingMain.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     photos_data = validated_data.pop('photos', [])
+    #     lodging = lodgingMain.objects.create(**validated_data)
 
-        # photos_data를 사용하여 lodgingPhoto 객체를 생성하고 lodging과 연결합니다.
-        for photo_data in photos_data:
-            lodgingPhoto.objects.create(lodging=lodging, **photo_data)
+    #     for photo_data in photos_data:
+    #         lodgingPhoto.objects.create(lodging=lodging, **photo_data)
 
-        return lodging
+    #     return lodging
+
 
 
 

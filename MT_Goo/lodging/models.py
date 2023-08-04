@@ -26,7 +26,7 @@ class lodgingMain(models.Model):
     check_in_time = models.CharField(max_length=20)
     check_out_time = models.CharField(max_length=20)
     mainPhoto = models.ImageField(upload_to=lodging_main_photo_path, blank=True, null=True)
-
+    
     def __str__(self):
         return self.name
 
@@ -41,16 +41,6 @@ class priceByDate(models.Model):
 
     def __str__(self):
         return f"{self.lodging.name} - {self.date}: {self.price}"
-
-# class lodgingPhoto(models.Model):
-#     # 사진과 관련된 필드를 여기에 추가하세요 (예: 이미지, 캡션 등)
-#     image = models.ImageField(upload_to=lodging_sub_photos_path, blank=True, null=True)
-#     caption = models.CharField(max_length=100)
-
-#     def __str__(self):
-#         return self.caption or '사진'
-
-
 
 class review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
