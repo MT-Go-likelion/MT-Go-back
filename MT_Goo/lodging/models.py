@@ -23,8 +23,8 @@ class lodgingMain(models.Model):
     scrap = models.IntegerField(default=0)
     content = models.TextField()
     precaution = models.TextField()
-    check_in_time = models.CharField(max_length=20)
-    check_out_time = models.CharField(max_length=20)
+    checkInTime = models.CharField(max_length=20)
+    checkOutTime = models.CharField(max_length=20)
     mainPhoto = models.ImageField(upload_to=lodging_main_photo_path, blank=True, null=True)
     
     def __str__(self):

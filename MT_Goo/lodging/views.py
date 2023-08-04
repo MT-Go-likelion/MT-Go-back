@@ -6,17 +6,18 @@ from .models import lodgingMain, lodgingPhoto, review, priceByDate
 from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodgingDetailSerializer, reviewCreateSerializer, reviewSerializer, priceByDateSerializer
 from rest_framework.permissions import IsAuthenticated
 
-class CreateLodgingView(APIView):
-    parser_classes = [MultiPartParser]
+class createLodgingView(APIView):
+    # parser_classes = [MultiPartParser]
 
     def post(self, request, format=None):
         serializer = lodgingCreateSerializer(data=request.data)
         print(request.data)
         if serializer.is_valid():
             lodging = serializer.save()
-            photos = request.FILES.getlist('photos')
-            for photo in photos:
-                lodgingPhoto.objects.create(lodging=lodging, image = photo)
+            if request.FILES.getlist('photos'):
+                photos = request.FILES.getlist('photos')
+                for photo in photos:
+                    lodgingPhoto.objects.create(lodging=lodging, image = photo)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -45,7 +46,7 @@ class lodgingDetailView(APIView):
         except lodgingMain.DoesNotExist:
             return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
 
-class CreateReviewView(APIView):
+class createReviewView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
 
     def post(self, request, format=None):
