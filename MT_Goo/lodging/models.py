@@ -52,7 +52,7 @@ class review(models.Model):
         return f"review"
 
 class lodgingScrap(models.Model):
-    scrap = models.BooleanField(default=False)
+    isScrap = models.BooleanField(default=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # User 모델과 연결
     lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE) # lodgingMain 모델과 연결
     def __str__(self):
