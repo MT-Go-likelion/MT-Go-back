@@ -9,4 +9,9 @@ class shoppingMainSerializer(serializers.ModelSerializer):
 class createShoppingSerializer(serializers.ModelSerializer):
     class Meta:
         model = shoppingMain
-        fields = ['user', 'item', 'price', 'amount']
+        fields = ['item', 'price', 'amount']
+
+    def create(self, validated_data):
+        user = validated_data.get('user')
+        shopping = shoppingMain.objects.create(user=user, **validated_data)
+        return shopping
