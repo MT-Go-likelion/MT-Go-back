@@ -16,6 +16,6 @@ class recreationMain(models.Model):
     
 
 class recreationScrap(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user")
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="userRecreation")
     recreation = models.ForeignKey(recreationMain, on_delete=models.CASCADE, related_name="recreationScrap")
     scrap = models.BooleanField(default=False)
