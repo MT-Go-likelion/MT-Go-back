@@ -5,7 +5,8 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import logout
 from .models import CustomUser
 from .serializers import CustomUserSerializer, LoginSerializer
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 class UserCreateView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
@@ -17,14 +18,16 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
     permission_classes = [AllowAny]
-
+    @swagger_auto_schema(
+        responses={status.HTTP_200_OK: openapi.Schema(type=openapi.TYPE_OBJECT, properties={'token': openapi.Schema(type=openapi.TYPE_STRING)})},
+    )
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)  # Token 객체의 objects 속성을 사용합니다.
-    
-        return Response({'token': token.key})
+        print(user)
+        return Response({'token': token.key, 'name': user.name, 'email': user.email})
 
 class LogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
