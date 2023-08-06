@@ -47,25 +47,19 @@ class createLodgingView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class lodgingMainView(generics.ListAPIView):
+class lodgingMainView(APIView):
     serializer_class = lodgingMainSerializer
     def get(self, request, format=None):
         lodgings = lodgingMain.objects.all()
         serializer = lodgingMainSerializer(lodgings, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-
-class lodgingDetailView(generics.RetrieveAPIView):
-    queryset = lodgingMain.objects.all()
-    serializer_class = lodgingDetailSerializer
-
-    def get(self, request, *args, **kwargs):
+class lodgingDetailView(APIView):
+    @swagger_auto_schema(responses={status.HTTP_200_OK: lodgingDetailSerializer})
+    def get(self, request, pk, format=None):
         try:
-            lodging = lodgingMain.objects.get(pk=pk)
-            serializer = lodgingDetailSerializer(lodging)
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, context={'request': request})
+            serializer = lodgingDetailSerializer(lodging, context={'request': request})
+
 
             # 숙소에 해당하는 리뷰들 가져오기
             reviews = review.objects.filter(lodging=instance)
@@ -79,7 +73,6 @@ class lodgingDetailView(generics.RetrieveAPIView):
             return Response(data, status=status.HTTP_200_OK)
         except lodgingMain.DoesNotExist:
             return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
-
 
 class createReviewView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
