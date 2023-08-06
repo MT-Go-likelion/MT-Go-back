@@ -6,21 +6,6 @@ class shoppingMainSerializer(serializers.ModelSerializer):
         model = shoppingMain
         fields = '__all__'
 
-<<<<<<< Updated upstream
-class createShoppingSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = shoppingMain
-<<<<<<< Updated upstream
-        fields = ['user', 'item', 'price', 'amount']
-=======
-        fields = ['item', 'price', 'amount']
-        
-    def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['user'] = user
-        return super().create(validated_data)
->>>>>>> Stashed changes
-=======
 class createShoppingListSerializer(serializers.ListSerializer):
 
     def create(self, validated_data_list):
@@ -44,4 +29,4 @@ class createShoppingSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         shopping = shoppingMain.objects.create(user=user, **validated_data)
         return shopping
->>>>>>> Stashed changes
+
