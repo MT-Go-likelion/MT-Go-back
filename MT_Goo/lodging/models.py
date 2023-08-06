@@ -20,6 +20,7 @@ class lodgingMain(models.Model):
     phoneNumber = models.CharField(max_length=20)
     homePageURL = models.CharField(max_length=50)
     headCount = models.IntegerField()
+    amenities = models.TextField()
     content = models.TextField()
     precaution = models.TextField()
     checkInTime = models.CharField(max_length=20)

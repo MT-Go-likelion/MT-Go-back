@@ -21,6 +21,7 @@ class createLodgingView(APIView):
             'price': openapi.Schema(type=openapi.TYPE_INTEGER),
             'phoneNumber': openapi.Schema(type=openapi.TYPE_STRING),
             'homePageURL': openapi.Schema(type=openapi.TYPE_STRING),
+            'amenities' : openapi.Schema(type=openapi.TYPE_STRING),
             'headCount': openapi.Schema(type=openapi.TYPE_INTEGER),
             'content': openapi.Schema(type=openapi.TYPE_STRING),
             'precaution': openapi.Schema(type=openapi.TYPE_STRING),

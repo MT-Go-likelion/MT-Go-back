@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import lodgingMain, lodgingPhoto, review, priceByDate, lodgingScrap
 
 
+
+
 class lodgingScrapSerializer(serializers.ModelSerializer):
     class Meta:
         model = lodgingScrap
@@ -98,8 +100,9 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
         model = lodgingMain
         fields = ['pk', 'name', 'address', 'place', 'price', 'phoneNumber', 
                   'homePageURL', 'headCount',
-                  'content', 'precaution', 'checkInTime', 'checkOutTime', 
+                  'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime', 
                   'mainPhoto', 'photos', 'reviews', 'pricesByDate', 'scrapCount', 'isScrap']
+
     def get_pricesByDate(self, lodging):
         prices_by_date = priceByDate.objects.filter(lodging=lodging)
         return priceByDateSerializer(prices_by_date, many=True).data
