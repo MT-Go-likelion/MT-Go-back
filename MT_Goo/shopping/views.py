@@ -11,13 +11,12 @@ class shoppingMainView(APIView):
         shopping = shoppingMain.objects.all()
         serializer = shoppingMainSerializer(shopping, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
 class createShoppingView(APIView):
     permission_classes = [IsAuthenticated]
+
     def post(self, request, format=None):
-        user = request.user
-        request.data['user'] = user.id
-        serializer = createShoppingSerializer(data=request.data)
+        serializer = createShoppingSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
