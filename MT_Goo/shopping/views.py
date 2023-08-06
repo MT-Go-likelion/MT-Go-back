@@ -17,9 +17,13 @@ class createShoppingView(APIView):
 
     def post(self, request, format=None):
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         serializer = createShoppingSerializer(data=request.data)
 =======
         serializer = createShoppingSerializer(data=request.data, context={'request': request})
+>>>>>>> Stashed changes
+=======
+        serializer = createShoppingSerializer(data=request.data, context={'request': request}, many=True)
 >>>>>>> Stashed changes
         if serializer.is_valid():
             serializer.save()
