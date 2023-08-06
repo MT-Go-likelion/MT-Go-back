@@ -41,6 +41,7 @@ class review(models.Model):
     contents = models.TextField(null=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE)  # lodgingMain 모델과 ForeignKey로 연결
+    createdAt = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"review"
 
