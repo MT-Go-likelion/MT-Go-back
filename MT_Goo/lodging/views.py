@@ -88,7 +88,22 @@ class createReviewView(APIView):
                 'image': openapi.Schema(type=openapi.TYPE_FILE),
                 'lodgingPk': openapi.Schema(type=openapi.TYPE_STRING),
             },
-        )
+        ),
+        responses={
+            status.HTTP_201_CREATED: openapi.Schema(
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        'score': openapi.Schema(type=openapi.TYPE_NUMBER, format=openapi.FORMAT_FLOAT),
+                        'content': openapi.Schema(type=openapi.TYPE_STRING),
+                        'image': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_URI),
+                        'createdAt': openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_DATETIME),
+                        'userName': openapi.Schema(type=openapi.TYPE_STRING),
+                    },
+                ),
+            )
+        },
     )
     def post(self, request, format=None):
         serializer = reviewCreateSerializer(data=request.data)
