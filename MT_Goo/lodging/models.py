@@ -44,7 +44,7 @@ class priceByDate(models.Model):
 
 class review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
-    image = models.ImageField(upload_to="review/", null=True, blank=True)
+    image = models.ImageField(upload_to="review/", null=True)
     contents = models.TextField(null=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE)  # lodgingMain 모델과 ForeignKey로 연결
