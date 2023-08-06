@@ -29,7 +29,7 @@ class createShoppingView(APIView):
         )
     )
     def post(self, request, format=None):
-        serializer = createShoppingSerializer(data=request.data, context={'request': request})
+        serializer = createShoppingSerializer(data=request.data, context={'request': request}, many=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)

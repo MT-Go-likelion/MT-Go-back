@@ -6,11 +6,8 @@ class shoppingMainSerializer(serializers.ModelSerializer):
         model = shoppingMain
         fields = '__all__'
 
-class createShoppingSerializer(serializers.ListSerializer):
-    class Meta:
-        model = shoppingMain
-        fields = ['item', 'price', 'amount']
-        
+class createShoppingListSerializer(serializers.ListSerializer):
+
     def create(self, validated_data_list):
         user = self.context['request'].user
         shopping_list = []
@@ -20,5 +17,16 @@ class createShoppingSerializer(serializers.ListSerializer):
             shopping_instance = self.child.Meta.model(**validated_data)
             shopping_list.append(shopping_instance)
     
-        return super().bulk_create(shopping_list)
+        return self.child.Meta.model.objects.bulk_create(shopping_list)
+    
+class createShoppingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = shoppingMain
+        fields = ['item', 'price', 'amount']
+        list_serializer_class = createShoppingListSerializer
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        shopping = shoppingMain.objects.create(user=user, **validated_data)
+        return shopping
 
