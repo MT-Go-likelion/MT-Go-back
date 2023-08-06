@@ -9,7 +9,7 @@ from rest_framework.authentication import TokenAuthentication
 from accounts.models import CustomUser
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-
+from django.core.serializers import serialize
 class createLodgingView(APIView):
     # parser_classes = [MultiPartParser]
     @swagger_auto_schema(request_body= openapi.Schema(
@@ -101,7 +101,10 @@ class createReviewView(APIView):
                 if request.user.is_authenticated:
                     # lodging 정보와 user 정보를 serializer에 전달해줍니다.
                     serializer.save(user=request.user, lodging=lodging)
-                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                    reviews = review.objects.filter(lodging=lodging)
+                    reviews = review.objects.filter(lodging=lodging)
+                    serialized_reviews = reviewSerializer(reviews, many=True)
+                    return Response(serialized_reviews.data, status=status.HTTP_201_CREATED)
                 else:
                     return Response({"error": "Authentication failed."}, status=status.HTTP_401_UNAUTHORIZED)
             except lodgingMain.DoesNotExist:
