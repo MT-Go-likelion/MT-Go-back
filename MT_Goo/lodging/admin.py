@@ -3,4 +3,5 @@ from .models import *
 # Register your models here.
 admin.site.register(review)
 admin.site.register(lodgingMain)
-admin.site.register(priceByDate)
+admin.site.register(lodgingScrap)
+admin.site.register(lodgingPhoto)

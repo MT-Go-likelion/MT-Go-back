@@ -12,10 +12,9 @@ class recreationMain(models.Model):
     photo = models.ImageField(upload_to=recreation_main_photo_path, blank=True, null=True)
     headCountMin = models.IntegerField()
     headCountMax = models.IntegerField()
-    scrap = models.IntegerField(default=0)
     
 
 class recreationScrap(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="userRecreation")
     recreation = models.ForeignKey(recreationMain, on_delete=models.CASCADE, related_name="recreationScrap")
-    scrap = models.BooleanField(default=False)
+    isScrap = models.BooleanField(default=False)

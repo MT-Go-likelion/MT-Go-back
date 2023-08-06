@@ -34,13 +34,6 @@ class lodgingPhoto(models.Model):
     image = models.ImageField(upload_to=lodging_sub_photos_path, blank=True, null=True)
     lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE, related_name='photos')  # ForeignKey로 변경
 
-class priceByDate(models.Model):
-    lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE)
-    date = models.DateField()
-    price = models.IntegerField()
-
-    def __str__(self):
-        return f"{self.lodging.name} - {self.date}: {self.price}"
 
 class review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
@@ -53,7 +46,7 @@ class review(models.Model):
 
 class lodgingScrap(models.Model):
     isScrap = models.BooleanField(default=False)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # User 모델과 연결
-    lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE) # lodgingMain 모델과 연결
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="userLodging")  # User 모델과 연결
+    lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE, related_name="lodgingScrap") # lodgingMain 모델과 연결
     def __str__(self):
         return f"lodgingScrap"

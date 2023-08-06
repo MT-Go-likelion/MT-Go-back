@@ -1,8 +1,5 @@
 from rest_framework import serializers
-from .models import lodgingMain, lodgingPhoto, review, priceByDate, lodgingScrap
-
-
-
+from .models import lodgingMain, lodgingPhoto, review, lodgingScrap
 
 class lodgingScrapSerializer(serializers.ModelSerializer):
     class Meta:
@@ -80,18 +77,10 @@ class reviewSerializer(serializers.ModelSerializer):
             ret['image'] = instance.image.url
         return ret
 
-
-class priceByDateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = priceByDate
-        fields = ['date', 'price']
-
-
 class lodgingDetailSerializer(serializers.ModelSerializer):
     # Use the modified lodgingPhotoSerializer
     photos = lodgingPhotoSerializer(many=True)
     reviews = reviewSerializer(many=True, required=False)
-    pricesByDate = serializers.SerializerMethodField()
     mainPhoto = serializers.SerializerMethodField()
     scrapCount = serializers.SerializerMethodField()
     isScrap = serializers.SerializerMethodField()
@@ -101,11 +90,7 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
         fields = ['pk', 'name', 'address', 'place', 'price', 'phoneNumber', 
                   'homePageURL', 'headCount',
                   'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime', 
-                  'mainPhoto', 'photos', 'reviews', 'pricesByDate', 'scrapCount', 'isScrap']
-
-    def get_pricesByDate(self, lodging):
-        prices_by_date = priceByDate.objects.filter(lodging=lodging)
-        return priceByDateSerializer(prices_by_date, many=True).data
+                  'mainPhoto', 'photos', 'reviews', 'scrapCount', 'isScrap']
 
     def get_mainPhoto(self, lodging):
         if lodging.mainPhoto:

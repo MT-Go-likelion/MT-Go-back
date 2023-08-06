@@ -26,7 +26,6 @@ class LoginView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)  # Token 객체의 objects 속성을 사용합니다.
-        print(user)
         return Response({'token': token.key, 'name': user.name, 'email': user.email})
 
 class LogoutView(generics.GenericAPIView):
