@@ -45,6 +45,7 @@ class lodgingDetailView(APIView):
     def get(self, request, pk, format=None):
         try:
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             lodging = lodgingMain.objects.get(pk=pk)
 <<<<<<< Updated upstream
             serializer = lodgingDetailSerializer(lodging)
@@ -52,9 +53,15 @@ class lodgingDetailView(APIView):
             instance = self.get_object()
             serializer = self.get_serializer(instance, context={'request': request})
 =======
+=======
+            lodging = lodgingMain.objects.get(pk=pk)
+>>>>>>> Stashed changes
             serializer = lodgingDetailSerializer(lodging, context={'request': request})
 >>>>>>> Stashed changes
 
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
             # 숙소에 해당하는 리뷰들 가져오기
             reviews = review.objects.filter(lodging=lodging)
@@ -70,9 +77,12 @@ class lodgingDetailView(APIView):
             return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 class CreateReviewView(APIView):
 =======
 
+=======
+>>>>>>> Stashed changes
 
 class createReviewView(APIView):
 >>>>>>> Stashed changes
