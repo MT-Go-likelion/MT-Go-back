@@ -59,15 +59,12 @@ class lodgingMainSerializer(serializers.ModelSerializer):
 
 
 # 리뷰 작성 Serializer
-
-
 class reviewCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = review
         fields = ['score', 'image', 'contents']
+        
 # 리뷰 Serializer
-
-
 class reviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = review
@@ -116,8 +113,9 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
     def get_scrapCount(self, obj):
         return lodgingScrap.objects.filter(lodging=obj, isScrap=True).count()
 
-
 class lodgingCreateSerializer(serializers.ModelSerializer):
+    photos = lodgingPhotoSerializer(many=True, required=False)
+
     class Meta:
         model = lodgingMain
         fields = '__all__'
