@@ -19,13 +19,16 @@ class createShoppingView(APIView):
     permission_classes = [IsAuthenticated]
     @swagger_auto_schema(
         request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'item': openapi.Schema(type=openapi.TYPE_STRING),
-                'price': openapi.Schema(type=openapi.TYPE_INTEGER),
-                'amount': openapi.Schema(type=openapi.TYPE_INTEGER),
-            },
-            required=['item', 'price', 'amount'],
+            type=openapi.TYPE_ARRAY,  # 리스트 형태로 요청 받음
+            items=openapi.Schema(
+                type=openapi.TYPE_OBJECT,
+                properties={
+                    'item': openapi.Schema(type=openapi.TYPE_STRING),
+                    'price': openapi.Schema(type=openapi.TYPE_INTEGER),
+                    'amount': openapi.Schema(type=openapi.TYPE_INTEGER),
+                },
+                required=['item', 'price', 'amount'],
+            ),
         )
     )
     def post(self, request, format=None):
