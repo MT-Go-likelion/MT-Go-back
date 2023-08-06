@@ -62,8 +62,10 @@ class lodgingDetailView(generics.RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
         try:
+            lodging = lodgingMain.objects.get(pk=pk)
+            serializer = lodgingDetailSerializer(lodging)
             instance = self.get_object()
-            serializer = self.get_serializer(instance)
+            serializer = self.get_serializer(instance, context={'request': request})
 
             # 숙소에 해당하는 리뷰들 가져오기
             reviews = review.objects.filter(lodging=instance)

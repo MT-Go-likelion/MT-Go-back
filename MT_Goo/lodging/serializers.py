@@ -92,14 +92,14 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
     pricesByDate = serializers.SerializerMethodField()
     mainPhoto = serializers.SerializerMethodField()
     scrapCount = serializers.SerializerMethodField()
+    isScrap = serializers.SerializerMethodField()
 
     class Meta:
         model = lodgingMain
         fields = ['pk', 'name', 'address', 'place', 'price', 'phoneNumber', 
-                  'homePageURL', 'headCount', 'scrap',
+                  'homePageURL', 'headCount',
                   'content', 'precaution', 'checkInTime', 'checkOutTime', 
-                  'mainPhoto', 'photos', 'reviews', 'pricesByDate', 'scrapCount']
-
+                  'mainPhoto', 'photos', 'reviews', 'pricesByDate', 'scrapCount', 'isScrap']
     def get_pricesByDate(self, lodging):
         prices_by_date = priceByDate.objects.filter(lodging=lodging)
         return priceByDateSerializer(prices_by_date, many=True).data
@@ -112,6 +112,21 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
 
     def get_scrapCount(self, obj):
         return lodgingScrap.objects.filter(lodging=obj, isScrap=True).count()
+    
+    def get_isScrap(self, lodging):
+        # 현재 로그인한 유저 정보 가져오기
+        user = self.context.get('request').user
+        # 유저가 로그인한 경우에만 스크랩 정보를 가져오도록 처리
+        if user and user.is_authenticated:
+            try:
+                scraps = lodgingScrap.objects.filter(
+                    user=user, lodging=lodging)
+                if scraps.exists():
+                    return scraps[0].isScrap  # 첫 번째 스크랩 객체의 scrap 값을 반환
+            except lodgingScrap.DoesNotExist:
+                pass
+
+        return None  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
 
 class lodgingCreateSerializer(serializers.ModelSerializer):
     photos = lodgingPhotoSerializer(many=True, required=False)
