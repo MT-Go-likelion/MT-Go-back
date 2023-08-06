@@ -2,8 +2,8 @@ from rest_framework import status, generics
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .models import lodgingMain, lodgingPhoto, review, priceByDate, lodgingScrap
-from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodgingDetailSerializer, reviewCreateSerializer, reviewSerializer, priceByDateSerializer, lodgingScrapSerializer
+from .models import lodgingMain, lodgingPhoto, review, lodgingScrap
+from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodgingDetailSerializer, reviewCreateSerializer, reviewSerializer, lodgingScrapSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from accounts.models import CustomUser
@@ -86,6 +86,7 @@ class createReviewView(APIView):
                 'score': openapi.Schema(type=openapi.TYPE_NUMBER, format=openapi.FORMAT_FLOAT),
                 'content': openapi.Schema(type=openapi.TYPE_STRING),
                 'image': openapi.Schema(type=openapi.TYPE_FILE),
+                'lodgingPk': openapi.Schema(type=openapi.TYPE_STRING),
             },
         )
     )
@@ -93,9 +94,9 @@ class createReviewView(APIView):
         serializer = reviewCreateSerializer(data=request.data)
         if serializer.is_valid():
             # 숙박 정보의 pk를 요청 데이터에서 가져옵니다.
-            lodging_id = request.data.get('lodging_id')
+            lodgingPk = request.data.get('lodgingPk')
             try:
-                lodging = lodgingMain.objects.get(pk=lodging_id)
+                lodging = lodgingMain.objects.get(pk=lodgingPk)
                 # 사용자의 세션에서 인증 정보를 확인하고 user에 할당합니다.
                 if request.user.is_authenticated:
                     # lodging 정보와 user 정보를 serializer에 전달해줍니다.
