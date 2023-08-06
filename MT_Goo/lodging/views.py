@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -7,13 +7,36 @@ from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodging
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from accounts.models import CustomUser
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class createLodgingView(APIView):
     # parser_classes = [MultiPartParser]
-
+    @swagger_auto_schema(request_body= openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        properties={
+            'name': openapi.Schema(type=openapi.TYPE_STRING),
+            'address': openapi.Schema(type=openapi.TYPE_STRING),
+            'place': openapi.Schema(type=openapi.TYPE_STRING),
+            'price': openapi.Schema(type=openapi.TYPE_INTEGER),
+            'phoneNumber': openapi.Schema(type=openapi.TYPE_STRING),
+            'homePageURL': openapi.Schema(type=openapi.TYPE_STRING),
+            'amenities' : openapi.Schema(type=openapi.TYPE_STRING),
+            'headCount': openapi.Schema(type=openapi.TYPE_INTEGER),
+            'content': openapi.Schema(type=openapi.TYPE_STRING),
+            'precaution': openapi.Schema(type=openapi.TYPE_STRING),
+            'checkInTime': openapi.Schema(type=openapi.TYPE_STRING),
+            'checkOutTime': openapi.Schema(type=openapi.TYPE_STRING),
+            'mainPhoto': openapi.Schema(type=openapi.TYPE_FILE),
+            'photos': openapi.Schema(
+                type=openapi.TYPE_ARRAY,
+                items=openapi.Schema(type=openapi.TYPE_FILE)
+            ),
+        },
+        required=['name', 'address', 'place', 'price', 'phoneNumber', 'homePageURL', 'headCount', 'content', 'precaution', 'checkInTime', 'checkOutTime', 'mainPhoto']
+    ))
     def post(self, request, format=None):
         serializer = lodgingCreateSerializer(data=request.data)
-        print(request.data)
         if serializer.is_valid():
             lodging = serializer.save()
             if request.FILES.getlist('photos'):
@@ -26,18 +49,19 @@ class createLodgingView(APIView):
 
 
 class lodgingMainView(APIView):
+    serializer_class = lodgingMainSerializer
     def get(self, request, format=None):
         lodgings = lodgingMain.objects.all()
         serializer = lodgingMainSerializer(lodgings, many=True, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-
 class lodgingDetailView(APIView):
+    @swagger_auto_schema(responses={status.HTTP_200_OK: lodgingDetailSerializer})
     def get(self, request, pk, format=None):
         try:
             lodging = lodgingMain.objects.get(pk=pk)
-            serializer = lodgingDetailSerializer(lodging)
+            serializer = lodgingDetailSerializer(lodging, context={'request': request})
+
             # 숙소에 해당하는 리뷰들 가져오기
             reviews = review.objects.filter(lodging=lodging)
             review_serializer = reviewSerializer(reviews, many=True)
@@ -54,7 +78,17 @@ class lodgingDetailView(APIView):
 
 class createReviewView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
-
+    
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'score': openapi.Schema(type=openapi.TYPE_NUMBER, format=openapi.FORMAT_FLOAT),
+                'content': openapi.Schema(type=openapi.TYPE_STRING),
+                'image': openapi.Schema(type=openapi.TYPE_FILE),
+            },
+        )
+    )
     def post(self, request, format=None):
         serializer = reviewCreateSerializer(data=request.data)
         if serializer.is_valid():
@@ -77,7 +111,16 @@ class createReviewView(APIView):
 class lodgingScrapView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'lodging': openapi.Schema(type=openapi.TYPE_INTEGER),
+                'isScrap': openapi.Schema(type=openapi.TYPE_BOOLEAN),
+            },
+            required=['lodging', 'isScrap'],
+        )
+    )
     def post(self, request, format=None):
         data = request.data
         data['user'] = request.user.id

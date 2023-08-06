@@ -5,6 +5,6 @@ urlpatterns = [
     path('main/', lodgingMainView.as_view(), name='lodgingMain'),
     path('create/', createLodgingView.as_view(), name='createLodging'),
     path('detail/<int:pk>/', lodgingDetailView.as_view(), name='lodgingDetail'),
-    path('create_review/', createReviewView.as_view(), name='createReview'),
+    path('createReview/', createReviewView.as_view(), name='createReview'),
     path('scrap/', lodgingScrapView.as_view(), name='createScrap'),
 ]
