@@ -23,8 +23,8 @@ class lodgingMain(models.Model):
     amenities = models.TextField()
     content = models.TextField()
     precaution = models.TextField()
-    check_in_time = models.CharField(max_length=20)
-    check_out_time = models.CharField(max_length=20)
+    checkInTime = models.CharField(max_length=20)
+    checkOutTime = models.CharField(max_length=20)
     mainPhoto = models.ImageField(upload_to=lodging_main_photo_path, blank=True, null=True)
     
     def __str__(self):
@@ -44,7 +44,7 @@ class priceByDate(models.Model):
 
 class review(models.Model):
     score = models.DecimalField(max_digits=2, decimal_places=1)
-    image = models.ImageField(upload_to="review/", null=True, blank=True)
+    image = models.ImageField(upload_to="review/", null=True)
     contents = models.TextField(null=True)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE)  # lodgingMain 모델과 ForeignKey로 연결
@@ -52,7 +52,7 @@ class review(models.Model):
         return f"review"
 
 class lodgingScrap(models.Model):
-    scrap = models.BooleanField(default=False)
+    isScrap = models.BooleanField(default=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)  # User 모델과 연결
     lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE) # lodgingMain 모델과 연결
     def __str__(self):
