@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import lodgingMain, lodgingPhoto, review, priceByDate
+from .models import lodgingMain, lodgingPhoto, review, priceByDate, lodgingScrap
 
 class lodgingPhotoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -58,12 +58,6 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
     reviews = reviewSerializer(many=True, required=False)
     prices_by_date = serializers.SerializerMethodField()
     mainPhoto = serializers.SerializerMethodField()
-<<<<<<< Updated upstream
-
-    class Meta:
-        model = lodgingMain
-        fields = ['pk', 'name', 'address', 'place', 'price', 'phoneNumber', 'homePageURL', 'headCount', 'scrap', 'content', 'precaution', 'check_in_time', 'check_out_time', 'mainPhoto', 'photos', 'reviews', 'prices_by_date']
-=======
     scrapCount = serializers.SerializerMethodField()
     isScrap = serializers.SerializerMethodField()
 
@@ -71,9 +65,8 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
         model = lodgingMain
         fields = ['pk', 'name', 'address', 'place', 'price', 'phoneNumber', 
                   'homePageURL', 'headCount',
-                  'content', 'precaution', 'checkInTime', 'checkOutTime', 
+                  'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime', 
                   'mainPhoto', 'photos', 'reviews', 'pricesByDate', 'scrapCount', 'isScrap']
->>>>>>> Stashed changes
 
     def get_prices_by_date(self, lodging):
         prices_by_date = priceByDate.objects.filter(lodging=lodging)
@@ -85,9 +78,6 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
         else:
             return None
 
-<<<<<<< Updated upstream
-
-=======
     def get_scrapCount(self, obj):
         return lodgingScrap.objects.filter(lodging=obj, isScrap=True).count()
     
@@ -105,7 +95,6 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
                 pass
 
         return None  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
->>>>>>> Stashed changes
 
 class lodgingCreateSerializer(serializers.ModelSerializer):
     # photos = lodgingPhotoSerializer(many=True)
