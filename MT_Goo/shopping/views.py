@@ -15,6 +15,8 @@ class shoppingMainView(APIView):
 class createShoppingView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request, format=None):
+        user = request.user
+        request.data['user'] = user.id
         serializer = createShoppingSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
