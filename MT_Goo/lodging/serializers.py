@@ -131,3 +131,44 @@ class lodgingCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = lodgingMain
         fields = '__all__'
+
+class myPageLodgingScrapSerializer(serializers.Serializer):
+    isScrap = serializers.SerializerMethodField()
+    avgScore = serializers.SerializerMethodField()
+    mainPhoto = serializers.SerializerMethodField()
+    class Meta:
+        models = lodgingMain
+        fields = ['pk', 'name', 'place', 'price',
+                  'headCount', 'mainPhoto', 'avgScore', 'isScrap']
+        
+    def get_avgScore(self, obj):
+        # 숙소에 연결된 리뷰들의 점수 평균 계산
+        reviews = review.objects.filter(lodging=obj)
+        if reviews.exists():
+            total_score = sum(review.score for review in reviews)
+            avgScore = total_score / reviews.count()
+            avgScore_rounded = round(avgScore, 1)  # 소수점 첫째 자리까지 반올림
+            return avgScore_rounded
+        else:
+            return 0
+
+    def get_mainPhoto(self, lodging):
+        if lodging.mainPhoto:
+            return lodging.mainPhoto.url
+        else:
+            return None
+
+    def get_isScrap(self, lodging):
+        # 현재 로그인한 유저 정보 가져오기
+        user = self.context.get('request').user
+        # 유저가 로그인한 경우에만 스크랩 정보를 가져오도록 처리
+        if user and user.is_authenticated:
+            try:
+                scraps = lodgingScrap.objects.filter(
+                    user=user, lodging=lodging)
+                if scraps.exists():
+                    return scraps[0].isScrap  # 첫 번째 스크랩 객체의 scrap 값을 반환
+            except lodgingScrap.DoesNotExist:
+                pass
+
+        return None  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
