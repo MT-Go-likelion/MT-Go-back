@@ -3,6 +3,7 @@ from .models import recreationMain, recreationScrap
 
 class recreationMainSerializer(serializers.ModelSerializer):
     isScrap = serializers.SerializerMethodField()
+    photo = serializers.SerializerMethodField()
     class Meta:
         model = recreationMain
         fields = ['pk', 'name', 'photo', 'headCountMin', 'headCountMax', 'isScrap']
@@ -19,8 +20,13 @@ class recreationMainSerializer(serializers.ModelSerializer):
                     return scraps[0].isScrap  # 첫 번째 스크랩 객체의 scrap 값을 반환
             except recreationScrap.DoesNotExist:
                 pass
-
         return None  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
+    
+    def get_photo(self, recreation):
+        if recreation.photo:
+            return recreation.photo.url
+        else:
+            return None
     
 class recreationDetailSerializer(serializers.ModelSerializer):
     isScrap = serializers.SerializerMethodField()
@@ -35,7 +41,7 @@ class recreationDetailSerializer(serializers.ModelSerializer):
     
     def get_photo(self, recreation):
         if recreation.photo:
-            return recreation.mainPhoto.url
+            return recreation.photo.url
         else:
             return None
         
@@ -56,7 +62,7 @@ class recreationDetailSerializer(serializers.ModelSerializer):
 class createRecreationSerializer(serializers.ModelSerializer):
     class Meta:
         model = recreationMain
-        fields = ['name', 'content', 'headCountMin', 'headCountMax']
+        fields = '__all__'
 
 class recreationScrapSerializer(serializers.ModelSerializer):
     recreationPk = serializers.PrimaryKeyRelatedField(

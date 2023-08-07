@@ -175,7 +175,13 @@ class lodgingScrapView(APIView):
 class myPageLodgingScrapView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-    def get(self, request, format):
+    def get(self, request, format=None):
         user = request.user
-        scraps = lodgingScrap.objects.filter(user=user)
-        serializer = myPageLodgingScrapSerializer(scraps, many=True)
+        print(user)
+        scraps = lodgingScrap.objects.filter(user=user, isScrap = True)
+        print(scraps)
+        lodgings = []
+        for scrap in scraps:
+            lodgings.append(lodgingMain.objects.get(pk = scrap.lodging.pk))
+        serializer = myPageLodgingScrapSerializer(lodgings, many=True, context={'request': request})
+        return Response(serializer.data)
