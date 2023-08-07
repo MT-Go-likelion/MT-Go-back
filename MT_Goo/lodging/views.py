@@ -3,7 +3,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import lodgingMain, lodgingPhoto, review, lodgingScrap
-from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodgingDetailSerializer, reviewCreateSerializer, reviewSerializer, lodgingScrapSerializer, myPageLodgingScrapSerializer
+from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodgingDetailSerializer, reviewCreateSerializer, reviewSerializer, lodgingScrapSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from accounts.models import CustomUser
@@ -50,6 +50,11 @@ class createLodgingView(APIView):
 
 class lodgingMainView(APIView):
     serializer_class = lodgingMainSerializer
+    @swagger_auto_schema(
+    responses={
+        status.HTTP_200_OK: lodgingMainSerializer(many=True),
+    }
+    )
     def get(self, request, format=None):
         lodgings = lodgingMain.objects.all()
         serializer = lodgingMainSerializer(lodgings, many=True, context={'request': request})
@@ -177,11 +182,9 @@ class myPageLodgingScrapView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, format=None):
         user = request.user
-        print(user)
         scraps = lodgingScrap.objects.filter(user=user, isScrap = True)
-        print(scraps)
         lodgings = []
         for scrap in scraps:
             lodgings.append(lodgingMain.objects.get(pk = scrap.lodging.pk))
-        serializer = myPageLodgingScrapSerializer(lodgings, many=True, context={'request': request})
+        serializer = lodgingMainSerializer(lodgings, many=True, context={'request': request})
         return Response(serializer.data)
