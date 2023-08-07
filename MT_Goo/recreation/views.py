@@ -33,7 +33,7 @@ class createRecreationView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class recreationMainView(APIView):
-    @swagger_auto_schema(responses={status.HTTP_200_OK: recreationMainSerializer})
+    @swagger_auto_schema(responses={status.HTTP_200_OK: recreationMainSerializer(many=True)})
     def get(self, request, format=None):
         recreations = recreationMain.objects.all()
         serializer = recreationMainSerializer(recreations, context = {'request': request}, many=True)
@@ -49,8 +49,6 @@ class recreationDetailView(APIView):
         except recreationMain.DoesNotExist:
             return Response({"error": "recreation not found."}, status=status.HTTP_404_NOT_FOUND)
 
-
-    
 
 class recreationScrapView(APIView):
     authentication_classes = [TokenAuthentication]
@@ -78,3 +76,16 @@ class recreationScrapView(APIView):
         
         serializer = recreationScrapSerializer(scrap)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class myPageRecreationScrapView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    @swagger_auto_schema(responses={status.HTTP_200_OK: recreationMainSerializer(many=True)})
+    def get(self, request, format=None):
+        user = request.user
+        scraps = recreationScrap.objects.filter(user=user, isScrap = True)
+        recreations = []
+        for scrap in scraps:
+            recreations.append(recreationMain.objects.get(pk = scrap.recreation.pk))
+        serializer = recreationMainSerializer(recreations, many=True, context={'request': request})
+        return Response(serializer.data)
