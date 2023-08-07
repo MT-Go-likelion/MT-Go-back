@@ -4,7 +4,7 @@ from .models import shoppingMain
 class shoppingMainSerializer(serializers.ModelSerializer):
     class Meta:
         model = shoppingMain
-        fields = '__all__'
+        fields = ['pk', 'item', 'price', 'amount']
 
 class createShoppingListSerializer(serializers.ListSerializer):
 

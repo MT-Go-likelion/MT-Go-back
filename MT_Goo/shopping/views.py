@@ -7,11 +7,14 @@ from .serializers import shoppingMainSerializer, createShoppingSerializer
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.authentication import TokenAuthentication
 
 class shoppingMainView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     @swagger_auto_schema(responses={status.HTTP_200_OK: shoppingMainSerializer(many=True)})
     def get(self, request, format=None):
-        shopping = shoppingMain.objects.all()
+        shopping = shoppingMain.objects.filter(user=request.user)
         serializer = shoppingMainSerializer(shopping, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
