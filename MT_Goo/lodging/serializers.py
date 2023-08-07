@@ -90,7 +90,6 @@ class reviewSerializer(serializers.ModelSerializer):
 class lodgingDetailSerializer(serializers.ModelSerializer):
     # Use the modified lodgingPhotoSerializer
     photos = lodgingPhotoSerializer(many=True)
-    reviews = reviewSerializer(many=True, required=False)
     mainPhoto = serializers.SerializerMethodField()
     scrapCount = serializers.SerializerMethodField()
     isScrap = serializers.SerializerMethodField()
@@ -100,7 +99,7 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
         fields = ['pk', 'name', 'address', 'place', 'price', 'phoneNumber', 
                   'homePageURL', 'headCount',
                   'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime', 
-                  'mainPhoto', 'photos', 'reviews', 'scrapCount', 'isScrap']
+                  'mainPhoto', 'photos', 'scrapCount', 'isScrap']
 
     def get_mainPhoto(self, lodging):
         if lodging.mainPhoto:
