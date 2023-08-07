@@ -3,7 +3,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import lodgingMain, lodgingPhoto, review, lodgingScrap
-from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodgingDetailSerializer, reviewCreateSerializer, reviewSerializer, lodgingScrapSerializer
+from .serializers import lodgingCreateSerializer, lodgingMainSerializer, lodgingDetailSerializer, reviewCreateSerializer, reviewSerializer, lodgingScrapSerializer, myPageLodgingScrapSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from accounts.models import CustomUser
@@ -171,3 +171,11 @@ class lodgingScrapView(APIView):
         
         serializer = lodgingScrapSerializer(scrap)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+class myPageLodgingScrapView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    def get(self, request, format):
+        user = request.user
+        scraps = lodgingScrap.objects.filter(user=user)
+        serializer = myPageLodgingScrapSerializer(scraps, many=True)

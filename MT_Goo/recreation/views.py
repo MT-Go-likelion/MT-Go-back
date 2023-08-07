@@ -36,7 +36,7 @@ class recreationMainView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: recreationMainSerializer})
     def get(self, request, format=None):
         recreations = recreationMain.objects.all()
-        serializer = recreationMainSerializer(recreations, context = {'re': request}, many=True)
+        serializer = recreationMainSerializer(recreations, context = {'request': request}, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
 class recreationDetailView(APIView):
