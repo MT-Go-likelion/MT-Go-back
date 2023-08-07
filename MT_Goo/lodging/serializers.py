@@ -132,12 +132,13 @@ class lodgingCreateSerializer(serializers.ModelSerializer):
         model = lodgingMain
         fields = '__all__'
 
-class myPageLodgingScrapSerializer(serializers.Serializer):
+class myPageLodgingScrapSerializer(serializers.ModelSerializer):
     isScrap = serializers.SerializerMethodField()
     avgScore = serializers.SerializerMethodField()
     mainPhoto = serializers.SerializerMethodField()
+    
     class Meta:
-        models = lodgingMain
+        model = lodgingMain
         fields = ['pk', 'name', 'place', 'price',
                   'headCount', 'mainPhoto', 'avgScore', 'isScrap']
         
