@@ -7,6 +7,7 @@ from .models import CustomUser
 from .serializers import CustomUserSerializer, LoginSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from .serializers import DummySerializer
 class UserCreateView(generics.CreateAPIView):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
@@ -30,6 +31,7 @@ class LoginView(generics.GenericAPIView):
 
 class LogoutView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = DummySerializer
     def post(self, request, *args, **kwargs):
         try:
             token = Token.objects.get(user=request.user)
@@ -39,4 +41,3 @@ class LogoutView(generics.GenericAPIView):
 
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
-    

@@ -19,6 +19,7 @@ class shoppingMainView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class createShoppingView(APIView):
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     @swagger_auto_schema(
         request_body=openapi.Schema(

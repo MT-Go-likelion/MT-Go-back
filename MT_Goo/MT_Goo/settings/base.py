@@ -59,6 +59,14 @@ REST_FRAMEWORK = {
 
 TOKEN_EXPIRED_AFTER_SECONDS = 604800  # 1주일 (60 * 60 * 24 * 7)
 
+
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False,  # Optional: If you are not using session authentication
+    'EXCLUDE_VIEWS': ['path.to.LogoutView'],
+}
+
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
