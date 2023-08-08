@@ -26,3 +26,6 @@ class LoginSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError('Incorrect credentials. Please try again.')
         return data
+    
+class DummySerializer(serializers.Serializer):
+    pass

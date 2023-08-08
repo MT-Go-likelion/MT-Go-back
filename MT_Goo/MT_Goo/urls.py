@@ -25,6 +25,7 @@ urlpatterns = [
     path('lodging/', include('lodging.urls')),
     path('recreation/', include('recreation.urls')),
     path('shopping/', include('shopping.urls')),
+    path('team/', include('team.urls')),
 ] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
 if settings.DEBUG:
