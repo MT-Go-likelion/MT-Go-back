@@ -35,6 +35,9 @@ class createShoppingView(APIView):
         )
     )
     def post(self, request, format=None):
+        shoppingList = shoppingMain.objects.filter(user=request.user)
+        for shopping in shoppingList:
+            shopping.delete()
         serializer = createShoppingSerializer(data=request.data, context={'request': request}, many=True)
         if serializer.is_valid():
             serializer.save()
