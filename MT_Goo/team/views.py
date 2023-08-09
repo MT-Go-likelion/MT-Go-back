@@ -45,7 +45,7 @@ class teamSpaceView(APIView):
 class teamSpaceLodgingView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: lodgingMainSerializer})
     def get(self, request):
-        teamToken = request.data['teamToken']
+        teamToken = request.GET.get('teamToken')
         tSpace = teamSpace.objects.get(teamToken=teamToken)
         tLodgingScraps = teamLodgingScrap.objects.filter(teamSpace= tSpace)
         lodgings = []
@@ -90,7 +90,7 @@ class teamSpaceLodgingView(APIView):
 class teamSpaceRecreationView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: recreationMainSerializer})
     def get(self, request):
-        teamToken = request.data['teamToken']
+        teamToken = request.GET.get('teamToken')
         tSpace = teamSpace.objects.get(teamToken=teamToken)
         tRecreationScraps = teamRecreationScrap.objects.filter(teamSpace= tSpace)
         recreations = []
@@ -171,7 +171,7 @@ class teamSpaceShoppingView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: teamShoppingScrapSerializer})
     def get(self, request):
         try:
-            teamToken = request.data.get('teamToken')
+            teamToken = request.GET.get('teamToken')
             tSpace = teamSpace.objects.get(teamToken=teamToken)
             tShoppingScraps = teamShoppingScrap.objects.filter(teamSpace=tSpace)
             serializer = teamShoppingScrapSerializer(tShoppingScraps, many=True)
