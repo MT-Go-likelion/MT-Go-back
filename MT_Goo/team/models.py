@@ -14,12 +14,10 @@ class teamUser(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user")
 
 class teamLodgingScrap(models.Model):
-    isScrap = models.BooleanField()
     teamSpace = models.ForeignKey(teamSpace, on_delete=models.CASCADE, related_name="teamSpaceLodging")
     lodging = models.ForeignKey(lodgingMain, on_delete=models.CASCADE, related_name="lodging")
 
 class teamRecreationScrap(models.Model):
-    isScrap = models.BooleanField()
     teamSpace = models.ForeignKey(teamSpace, on_delete=models.CASCADE, related_name="teamSpaceRecreation")
     recreation = models.ForeignKey(recreationMain, on_delete=models.CASCADE, related_name="recreation")
     
