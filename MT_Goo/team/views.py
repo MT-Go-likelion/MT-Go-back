@@ -236,8 +236,8 @@ class teamSpaceRecreationScrapView(APIView):
 
 
 class teamSpaceShoppingView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         request_body=openapi.Schema(
@@ -281,4 +281,3 @@ class teamSpaceShoppingView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         except teamSpace.DoesNotExist:
             return Response({'error': 'Invalid team token'}, status=status.HTTP_400_BAD_REQUEST)
-
