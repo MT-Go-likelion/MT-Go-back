@@ -6,10 +6,25 @@ class teamSpaceSerializer(serializers.ModelSerializer):
         model = teamSpace
         fields = ['teamName', 'teamToken']
 
+class teamUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = teamUser
+        fields = '__all__'
+
 class teamLodgingScrapSerializer(serializers.ModelSerializer):
     class Meta:
         model = teamLodgingScrap
         fields = '__all__'
+
+
+class teamScrapListSerializer(serializers.ModelSerializer):
+    isScrap = serializers.SerializerMethodField()
+    class Meta:
+        model = teamSpace
+        fields = ['teamName', 'teamToken', 'isScrap']
+    def get_isScrap(self, obj):
+        scrapedTeam = self.context.get('scrapedTeam', [])  # context에서 scrapedTeam 정보를 가져옵니다.
+        return obj in scrapedTeam
 
 class teamRecreationScrapSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,6 +47,7 @@ class createTeamShoppingListSerializer(serializers.ListSerializer):
             shopping_list.append(shopping_instance)
     
         return self.child.Meta.model.objects.bulk_create(shopping_list)
+
 
 class createTeamShoppingSerializer(serializers.ModelSerializer):
     class Meta:
