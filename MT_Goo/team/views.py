@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from .serializers import teamSpaceSerializer,teamUserSerializer, teamLodgingScrapSerializer, teamRecreationScrapSerializer, createTeamShoppingSerializer, teamShoppingScrapSerializer, teamScrapListSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import teamUser, teamSpace, teamLodgingScrap, teamRecreationScrap, teamShoppingScrap
@@ -12,7 +13,7 @@ from lodging.serializers import lodgingMainSerializer
 from lodging.models import lodgingMain
 from recreation.serializers import recreationMainSerializer
 from recreation.models import recreationMain
-
+from accounts.serializers import CustomUserSerializer
 class teamSpaceView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -40,6 +41,25 @@ class teamSpaceView(APIView):
             tSpaces.append(user.teamSpace)
         serializer = teamSpaceSerializer(tSpaces, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class teamUserView(APIView):
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('teamToken', openapi.IN_QUERY, description="Team Token", type=openapi.TYPE_STRING)
+        ],
+        responses={
+            status.HTTP_200_OK: CustomUserSerializer(many=True),
+            status.HTTP_404_NOT_FOUND: openapi.Schema(type=openapi.TYPE_OBJECT, properties={'error': openapi.Schema(type=openapi.TYPE_STRING)})
+        }
+    )
+    def get(self, request):
+        teamToken = request.GET.get('teamToken')
+        team = teamSpace.objects.get(teamToken=teamToken)
+        users = teamUser.objects.filter(teamSpace = team)
+        userList = [user.user for user in users]  # 이름들을 추출
+        serializer = CustomUserSerializer(userList, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class joinTeamSpaceView(APIView):
     authentication_classes = [TokenAuthentication]
