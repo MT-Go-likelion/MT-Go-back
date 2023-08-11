@@ -13,7 +13,6 @@ from rest_framework.pagination import PageNumberPagination
 from django.core.serializers import serialize
 from drf_yasg.openapi import Response as OpenApiResponse
 
-
 class createLodgingView(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
@@ -50,51 +49,14 @@ class createLodgingView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # @swagger_auto_schema(
-    #     request_body=lodgingCreateSerializer,
-    #     manual_parameters=[
-    #         openapi.Parameter('pk', openapi.IN_PATH, description="Lodging ID", type=openapi.TYPE_INTEGER),
-    #     ],
-    #     responses={
-    #         status.HTTP_200_OK: lodgingMainSerializer,
-    #         status.HTTP_400_BAD_REQUEST: OpenApiResponse(description='Bad request')
-    #     }
-    # )
-    # def put(self, request, pk, format=None):
-    #     lodging = lodgingMain.objects.get(pk=pk)
-    #     serializer = lodgingCreateSerializer(lodging, data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    # @swagger_auto_schema(
-    #     manual_parameters=[
-    #         openapi.Parameter('pk', openapi.IN_PATH, description="Lodging ID", type=openapi.TYPE_INTEGER),
-    #     ],
-    #     responses={
-    #         status.HTTP_204_NO_CONTENT: OpenApiResponse(description='No content'),
-    #         status.HTTP_404_NOT_FOUND: OpenApiResponse(description='Not found')
-    #     }
-    # )
-    # def delete(self, request, pk, format=None):
-    #     lodging = lodgingMain.objects.get(pk=pk)
-    #     lodging.delete()
-    #     return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 class lodgingMainView(APIView):
     serializer_class = lodgingMainSerializer
-    # @swagger_auto_schema(
-    # responses={
-    #     status.HTTP_200_OK: lodgingMainSerializer(many=True),
-    # }
-    # )
 
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('page', openapi.IN_QUERY,
                               description="Page number", type=openapi.TYPE_INTEGER),
-            # openapi.Parameter('page_size', openapi.IN_QUERY, description="Number of items per page", type=openapi.TYPE_INTEGER),
         ],
         responses={
             status.HTTP_200_OK: lodgingMainSerializer(many=True),
@@ -130,7 +92,6 @@ class lodgingDetailView(APIView):
     @swagger_auto_schema(
         request_body=lodgingCreateSerializer,
         manual_parameters=[
-            openapi.Parameter('pk', openapi.IN_PATH, description="Lodging ID", type=openapi.TYPE_INTEGER),
             openapi.Parameter('deleteImage', openapi.IN_QUERY, description="List of image Pk to delete", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER)),
         ],
         responses={
@@ -158,10 +119,6 @@ class lodgingDetailView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'pk', openapi.IN_PATH, description="Lodging ID", type=openapi.TYPE_INTEGER),
-        ],
         responses={
             status.HTTP_204_NO_CONTENT: OpenApiResponse(description='No content'),
             status.HTTP_404_NOT_FOUND: OpenApiResponse(description='Not found')

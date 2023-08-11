@@ -27,7 +27,7 @@ class recreationMainSerializer(serializers.ModelSerializer):
             return recreation.photo.url
         else:
             return None
-    
+
 class recreationDetailSerializer(serializers.ModelSerializer):
     isScrap = serializers.SerializerMethodField()
     photo = serializers.SerializerMethodField()
