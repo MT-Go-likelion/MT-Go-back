@@ -4,7 +4,7 @@ from .models import lodgingMain, lodgingPhoto, review, lodgingScrap
 class lodgingScrapSerializer(serializers.ModelSerializer):
     class Meta:
         model = lodgingScrap
-        fields = '__all__'
+        fields = ['pk', 'image']
 
 
 class lodgingPhotoSerializer(serializers.ModelSerializer):
