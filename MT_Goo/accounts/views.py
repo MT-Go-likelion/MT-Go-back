@@ -41,3 +41,39 @@ class LogoutView(generics.GenericAPIView):
 
         logout(request)
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+# from rest_framework_simplejwt.tokens import RefreshToken
+
+# class LoginView(generics.GenericAPIView):
+#     serializer_class = LoginSerializer
+#     permission_classes = [AllowAny]
+
+#     @swagger_auto_schema(
+#         responses={status.HTTP_200_OK: openapi.Schema(type=openapi.TYPE_OBJECT, properties={'access': openapi.Schema(type=openapi.TYPE_STRING), 'refresh': openapi.Schema(type=openapi.TYPE_STRING)})},
+#     )
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         user = serializer.validated_data['user']
+        
+#         # 액세스 토큰 발급
+#         refresh = RefreshToken.for_user(user)
+#         access_token = str(refresh.access_token)
+
+#         return Response({'access': access_token, 'refresh': str(refresh)}, status=status.HTTP_200_OK)
+
+# class LogoutView(generics.GenericAPIView):
+#     permission_classes = [IsAuthenticated]
+#     serializer_class = DummySerializer
+
+#     def post(self, request, *args, **kwargs):
+#         refresh_token = request.data.get('refresh')
+#         if refresh_token:
+#             try:
+#                 RefreshToken(refresh_token).blacklist()
+#             except TokenError:
+#                 pass
+
+#         logout(request)
+#         return Response(status=status.HTTP_204_NO_CONTENT)

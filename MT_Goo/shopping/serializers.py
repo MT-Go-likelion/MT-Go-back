@@ -18,7 +18,7 @@ class createShoppingListSerializer(serializers.ListSerializer):
             shopping_list.append(shopping_instance)
     
         return self.child.Meta.model.objects.bulk_create(shopping_list)
-    
+
 class createShoppingSerializer(serializers.ModelSerializer):
     class Meta:
         model = shoppingMain

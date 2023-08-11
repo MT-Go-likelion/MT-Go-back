@@ -236,8 +236,8 @@ class teamSpaceRecreationScrapView(APIView):
 
 
 class teamSpaceShoppingView(APIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         request_body=openapi.Schema(
