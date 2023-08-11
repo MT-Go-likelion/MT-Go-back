@@ -12,6 +12,8 @@ from drf_yasg import openapi
 from rest_framework.pagination import PageNumberPagination
 from django.core.serializers import serialize
 from drf_yasg.openapi import Response as OpenApiResponse
+from MT_Goo.pagination import lodingListPagination, reviewListPagination
+
 
 class createLodgingView(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
@@ -50,6 +52,7 @@ class createLodgingView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class lodgingMainView(APIView):
     serializer_class = lodgingMainSerializer
 
@@ -63,13 +66,9 @@ class lodgingMainView(APIView):
         }
     )
     def get(self, request, format=None):
-        # lodgings = lodgingMain.objects.all()
-        # serializer = lodgingMainSerializer(lodgings, many=True, context={'request': request})
-        # return Response(serializer.data, status=status.HTTP_200_OK)
         lodgings = lodgingMain.objects.all()
 
-        # 페이지네이션 객체 생성 및 적용
-        paginator = PageNumberPagination()
+        paginator = lodingListPagination()
         paginated_lodgings = paginator.paginate_queryset(lodgings, request)
 
         serializer = lodgingMainSerializer(
@@ -92,7 +91,8 @@ class lodgingDetailView(APIView):
     @swagger_auto_schema(
         request_body=lodgingCreateSerializer,
         manual_parameters=[
-            openapi.Parameter('deleteImage', openapi.IN_QUERY, description="List of image Pk to delete", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER)),
+            openapi.Parameter('deleteImage', openapi.IN_QUERY, description="List of image Pk to delete",
+                              type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER)),
         ],
         responses={
             status.HTTP_200_OK: lodgingCreateSerializer,
@@ -130,7 +130,7 @@ class lodgingDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class lodgingReviewView(APIView):
+class lodgingReviewListView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: reviewSerializer})
     def get(self, request, pk, format=None):
         try:
@@ -138,15 +138,18 @@ class lodgingReviewView(APIView):
 
             # 숙소에 해당하는 리뷰들 가져오기
             reviews = review.objects.filter(lodging=lodging)
-            review_serializer = reviewSerializer(reviews, many=True)
+            paginator = reviewListPagination()
+            paginated_reviews = paginator.paginate_queryset(reviews, request)
+            serializer = reviewSerializer(paginated_reviews, many=True)
 
-            return Response(review_serializer.data, status=status.HTTP_200_OK)
+            return paginator.get_paginated_response(serializer.data)
         except lodgingMain.DoesNotExist:
             return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class createReviewView(APIView):
-    permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
         request_body=openapi.Schema(
@@ -185,15 +188,52 @@ class createReviewView(APIView):
                 if request.user.is_authenticated:
                     # lodging 정보와 user 정보를 serializer에 전달해줍니다.
                     serializer.save(user=request.user, lodging=lodging)
-                    reviews = review.objects.filter(lodging=lodging)
-                    reviews = review.objects.filter(lodging=lodging)
-                    serialized_reviews = reviewSerializer(reviews, many=True)
-                    return Response(serialized_reviews.data, status=status.HTTP_201_CREATED)
+                    # reviews = review.objects.filter(lodging=lodging)
+                    # serialized_reviews = reviewSerializer(reviews, many=True)
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
                 else:
                     return Response({"error": "Authentication failed."}, status=status.HTTP_401_UNAUTHORIZED)
             except lodgingMain.DoesNotExist:
                 return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class editReviewView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        request_body=reviewCreateSerializer,
+        responses={
+            status.HTTP_200_OK: reviewCreateSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                description='Bad request')
+        }
+    )
+    def put(self, request, pk):
+        try:
+            existing_review = review.objects.get(pk=pk)  # 기존 리뷰 가져오기
+            serializer = reviewCreateSerializer(
+                existing_review, data=request.data)  # 기존 리뷰에 데이터 업데이트
+            if serializer.is_valid():
+                # lodgingPk = request.data.get('lodgingPk')
+
+                # lodging = lodgingMain.objects.get(pk=lodgingPk)
+                if request.user.is_authenticated:
+                    serializer.save(user=request.user)
+                    return Response(serializer.data)
+                else:
+                    return Response({"error": "Authentication failed."}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except review.DoesNotExist:
+            return Response({"error": "Review not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        rev = review.objects.get(pk=pk)
+        rev.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class lodgingScrapView(APIView):
