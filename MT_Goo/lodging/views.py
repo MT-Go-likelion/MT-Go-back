@@ -13,8 +13,9 @@ from rest_framework.pagination import PageNumberPagination
 from django.core.serializers import serialize
 from drf_yasg.openapi import Response as OpenApiResponse
 
+
 class createLodgingView(APIView):
-    @swagger_auto_schema(request_body= openapi.Schema(
+    @swagger_auto_schema(request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         properties={
             'name': openapi.Schema(type=openapi.TYPE_STRING),
@@ -23,7 +24,7 @@ class createLodgingView(APIView):
             'price': openapi.Schema(type=openapi.TYPE_INTEGER),
             'phoneNumber': openapi.Schema(type=openapi.TYPE_STRING),
             'homePageURL': openapi.Schema(type=openapi.TYPE_STRING),
-            'amenities' : openapi.Schema(type=openapi.TYPE_STRING),
+            'amenities': openapi.Schema(type=openapi.TYPE_STRING),
             'headCount': openapi.Schema(type=openapi.TYPE_INTEGER),
             'content': openapi.Schema(type=openapi.TYPE_STRING),
             'precaution': openapi.Schema(type=openapi.TYPE_STRING),
@@ -35,7 +36,8 @@ class createLodgingView(APIView):
                 items=openapi.Schema(type=openapi.TYPE_FILE)
             ),
         },
-        required=['name', 'address', 'place', 'price', 'phoneNumber', 'homePageURL', 'headCount', 'content', 'precaution', 'checkInTime', 'checkOutTime', 'mainPhoto']
+        required=['name', 'address', 'place', 'price', 'phoneNumber', 'homePageURL',
+                  'headCount', 'content', 'precaution', 'checkInTime', 'checkOutTime', 'mainPhoto']
     ))
     def post(self, request, format=None):
         serializer = lodgingCreateSerializer(data=request.data)
@@ -79,6 +81,7 @@ class createLodgingView(APIView):
     #     lodging.delete()
     #     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class lodgingMainView(APIView):
     serializer_class = lodgingMainSerializer
     # @swagger_auto_schema(
@@ -86,9 +89,11 @@ class lodgingMainView(APIView):
     #     status.HTTP_200_OK: lodgingMainSerializer(many=True),
     # }
     # )
+
     @swagger_auto_schema(
         manual_parameters=[
-            openapi.Parameter('page', openapi.IN_QUERY, description="Page number", type=openapi.TYPE_INTEGER),
+            openapi.Parameter('page', openapi.IN_QUERY,
+                              description="Page number", type=openapi.TYPE_INTEGER),
             # openapi.Parameter('page_size', openapi.IN_QUERY, description="Number of items per page", type=openapi.TYPE_INTEGER),
         ],
         responses={
@@ -105,20 +110,69 @@ class lodgingMainView(APIView):
         paginator = PageNumberPagination()
         paginated_lodgings = paginator.paginate_queryset(lodgings, request)
 
-        serializer = lodgingMainSerializer(paginated_lodgings, many=True, context={'request': request})
+        serializer = lodgingMainSerializer(
+            paginated_lodgings, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
+
 
 class lodgingDetailView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: lodgingDetailSerializer})
     def get(self, request, pk, format=None):
         try:
             lodging = lodgingMain.objects.get(pk=pk)
-            serializer = lodgingDetailSerializer(lodging, context={'request': request})
+            serializer = lodgingDetailSerializer(
+                lodging, context={'request': request})
 
             return Response(serializer.data, status=status.HTTP_200_OK)
         except lodgingMain.DoesNotExist:
             return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
-        
+
+    @swagger_auto_schema(
+        request_body=lodgingCreateSerializer,
+        manual_parameters=[
+            openapi.Parameter('pk', openapi.IN_PATH, description="Lodging ID", type=openapi.TYPE_INTEGER),
+            openapi.Parameter('deleteImage', openapi.IN_QUERY, description="List of image Pk to delete", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_INTEGER)),
+        ],
+        responses={
+            status.HTTP_200_OK: lodgingCreateSerializer,
+            status.HTTP_400_BAD_REQUEST: OpenApiResponse(
+                description='Bad request')
+        }
+    )
+    def put(self, request, pk, format=None):
+        lodging = lodgingMain.objects.get(pk=pk)
+        serializer = lodgingCreateSerializer(lodging, data=request.data)
+        if serializer.is_valid():
+            lodging = serializer.save()
+            if request.data.getlist('deleteImage'):
+                delImagePkList = request.data.getlist('deleteImage')
+                for pk in delImagePkList:
+                    if lodgingPhoto.objects.get(pk=pk) is not None:
+                        lodgingPhoto.objects.get(pk=pk).delete()
+            if request.FILES.getlist('photos'):
+                addImageList = request.FILES.getlist('photos')
+                for addImage in addImageList:
+                    lodgingPhoto.objects.create(
+                        lodging=lodging, image=addImage)
+                return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'pk', openapi.IN_PATH, description="Lodging ID", type=openapi.TYPE_INTEGER),
+        ],
+        responses={
+            status.HTTP_204_NO_CONTENT: OpenApiResponse(description='No content'),
+            status.HTTP_404_NOT_FOUND: OpenApiResponse(description='Not found')
+        }
+    )
+    def delete(self, request, pk, format=None):
+        lodging = lodgingMain.objects.get(pk=pk)
+        lodging.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class lodgingReviewView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: reviewSerializer})
     def get(self, request, pk, format=None):
@@ -133,9 +187,10 @@ class lodgingReviewView(APIView):
         except lodgingMain.DoesNotExist:
             return Response({"error": "Lodging not found."}, status=status.HTTP_404_NOT_FOUND)
 
+
 class createReviewView(APIView):
     permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
-    
+
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -187,6 +242,7 @@ class createReviewView(APIView):
 class lodgingScrapView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -204,21 +260,24 @@ class lodgingScrapView(APIView):
         # lodging과 user가 같은 객체가 존재한다면 업데이트(덮어 쓰기)
         scrap, created = lodgingScrap.objects.update_or_create(
             lodging=lodgingMain.objects.get(pk=lodging_pk),
-            user=CustomUser.objects.get(pk = request.user.id),
+            user=CustomUser.objects.get(pk=request.user.id),
             defaults={'isScrap': data.get('isScrap')}
         )
-        
+
         serializer = lodgingScrapSerializer(scrap)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    
+
+
 class myPageLodgingScrapView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
     def get(self, request, format=None):
         user = request.user
-        scraps = lodgingScrap.objects.filter(user=user, isScrap = True)
+        scraps = lodgingScrap.objects.filter(user=user, isScrap=True)
         lodgings = []
         for scrap in scraps:
-            lodgings.append(lodgingMain.objects.get(pk = scrap.lodging.pk))
-        serializer = lodgingMainSerializer(lodgings, many=True, context={'request': request})
+            lodgings.append(lodgingMain.objects.get(pk=scrap.lodging.pk))
+        serializer = lodgingMainSerializer(
+            lodgings, many=True, context={'request': request})
         return Response(serializer.data)
