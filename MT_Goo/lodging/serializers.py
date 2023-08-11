@@ -72,7 +72,7 @@ class reviewSerializer(serializers.ModelSerializer):
     userName = serializers.SerializerMethodField()
     class Meta:
         model = review
-        fields = ['score', 'image', 'contents', 'createdAt', 'userName']
+        fields = ['pk', 'score', 'image', 'contents', 'createdAt', 'userName']
         list_serializer_class = reviewListSerializer
 
     # image 필드의 URL을 직렬화하기 위해 다음과 같이 to_representation 메서드를 오버라이드합니다.
