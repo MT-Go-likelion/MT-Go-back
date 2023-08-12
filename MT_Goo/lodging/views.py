@@ -115,7 +115,7 @@ class lodgingDetailView(APIView):
                 for addImage in addImageList:
                     lodgingPhoto.objects.create(
                         lodging=lodging, image=addImage)
-                return Response(serializer.data)
+            return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(
