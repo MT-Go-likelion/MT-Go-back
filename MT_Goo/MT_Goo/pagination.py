@@ -5,4 +5,4 @@ class lodingListPagination(PageNumberPagination):
 class recreationListPagination(PageNumberPagination):
     page_size = 4
 class reviewListPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 4

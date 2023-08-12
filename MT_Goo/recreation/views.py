@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from accounts.models import CustomUser
 from drf_yasg.openapi import Response as OpenApiResponse
 from rest_framework.pagination import PageNumberPagination
-
+from MT_Goo.pagination import recreationListPagination
 
 class createRecreationView(APIView):
     # permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
@@ -44,7 +44,7 @@ class recreationMainView(APIView):
         responses={status.HTTP_200_OK: recreationMainSerializer(many=True)})
     def get(self, request, format=None):
         recreations = recreationMain.objects.all()
-        paginator = PageNumberPagination()
+        paginator = recreationListPagination()
         paginated_lodgings = paginator.paginate_queryset(recreations, request)
         serializer = recreationMainSerializer(
             paginated_lodgings, context={'request': request}, many=True)
