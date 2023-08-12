@@ -1,10 +1,12 @@
 from rest_framework import serializers
 from .models import lodgingMain, lodgingPhoto, review, lodgingScrap
 
+
 class lodgingScrapSerializer(serializers.ModelSerializer):
     class Meta:
         model = lodgingScrap
         fields = '__all__'
+
 
 class lodgingPhotoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,7 +22,7 @@ class lodgingMainSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = lodgingMain
-        fields = ['pk', 'name', 'place', 'price',
+        fields = ['pk', 'name', 'place', 'peakWeekendPrice', 
                   'headCount', 'mainPhoto', 'avgScore', 'isScrap']
 
     def get_avgScore(self, obj):
@@ -62,13 +64,17 @@ class reviewCreateSerializer(serializers.ModelSerializer):
         model = review
         fields = ['score', 'image', 'contents']
 
+
 class reviewListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
         return super().to_representation(data)
-    
+
 # 리뷰 Serializer
+
+
 class reviewSerializer(serializers.ModelSerializer):
     userName = serializers.SerializerMethodField()
+
     class Meta:
         model = review
         fields = ['pk', 'score', 'image', 'contents', 'createdAt', 'userName']
@@ -81,10 +87,11 @@ class reviewSerializer(serializers.ModelSerializer):
             # 이미지 필드의 URL을 직렬화하여 반환합니다.
             ret['image'] = instance.image.url
         return ret
-    
+
     def get_userName(self, instance):
         userName = instance.user.name
         return userName
+
 
 class lodgingDetailSerializer(serializers.ModelSerializer):
     # Use the modified lodgingPhotoSerializer
@@ -95,9 +102,9 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = lodgingMain
-        fields = ['pk', 'name', 'address', 'place', 'price', 'phoneNumber', 
+        fields = ['pk', 'name', 'address', 'place', 'peakWeekendPrice', 'peakWeekdayPrice', 'lowWeekendPrice', 'lowWeekdayPrice', 'phoneNumber',
                   'homePageURL', 'headCount',
-                  'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime', 
+                  'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime',
                   'mainPhoto', 'photos', 'scrapCount', 'isScrap']
 
     def get_mainPhoto(self, lodging):
@@ -108,7 +115,7 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
 
     def get_scrapCount(self, obj):
         return lodgingScrap.objects.filter(lodging=obj, isScrap=True).count()
-    
+
     def get_isScrap(self, lodging):
         # 현재 로그인한 유저 정보 가져오기
         user = self.context.get('request').user
@@ -124,10 +131,10 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
 
         return None  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
 
+
 class lodgingCreateSerializer(serializers.ModelSerializer):
     photos = lodgingPhotoSerializer(many=True, required=False)
 
     class Meta:
         model = lodgingMain
         fields = '__all__'
-
