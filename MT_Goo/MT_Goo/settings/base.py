@@ -100,13 +100,9 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',  # PATCH 메서드 추가
-    'POST',
-    'PUT',
+    'DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT',  # 필요한 메서드 모두 추가
 ]
+
 
 ALLOWED_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
 
