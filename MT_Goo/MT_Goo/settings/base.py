@@ -108,6 +108,8 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
+ALLOWED_HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS']
+
 # 특정 도메인만 허용하고자 하는 경우 (배포 시 사용할 것을 권장합니다.)
 # CORS_ALLOWED_ORIGINS = [
 #     "http://example.com",
