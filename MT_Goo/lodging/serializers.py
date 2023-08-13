@@ -22,7 +22,7 @@ class lodgingMainSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = lodgingMain
-        fields = ['pk', 'name', 'place', 'peakWeekendPrice', 
+        fields = ['pk', 'name', 'place', 'lowWeekdayPrice', 
                   'headCount', 'mainPhoto', 'avgScore', 'isScrap']
 
     def get_avgScore(self, obj):
@@ -102,7 +102,8 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = lodgingMain
-        fields = ['pk', 'name', 'address', 'place', 'peakWeekendPrice', 'peakWeekdayPrice', 'lowWeekendPrice', 'lowWeekdayPrice', 'phoneNumber',
+        fields = ['pk', 'name', 'address', 'place', 'peakWeekendPrice', 'peakWeekdayPrice', 
+                  'lowWeekendPrice', 'lowWeekdayPrice', 'phoneNumber',
                   'homePageURL', 'headCount',
                   'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime',
                   'mainPhoto', 'photos', 'scrapCount', 'isScrap']
