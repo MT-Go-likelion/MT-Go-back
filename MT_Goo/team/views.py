@@ -3,7 +3,6 @@ from rest_framework.views import APIView
 from .serializers import teamSpaceSerializer,teamUserSerializer, teamLodgingScrapSerializer, teamRecreationScrapSerializer, createTeamShoppingSerializer, teamShoppingScrapSerializer, teamScrapListSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from .models import teamUser, teamSpace, teamLodgingScrap, teamRecreationScrap, teamShoppingScrap
@@ -14,6 +13,7 @@ from lodging.models import lodgingMain
 from recreation.serializers import recreationMainSerializer
 from recreation.models import recreationMain
 from accounts.serializers import CustomUserSerializer
+
 class teamSpaceView(APIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -26,7 +26,7 @@ class teamSpaceView(APIView):
         required=['teamName']
     ), responses={status.HTTP_200_OK: teamSpaceSerializer})
     def post(self, request):
-        serializer = teamSpaceSerializer(data = request.data)
+        serializer = teamSpaceSerializer(data = request.data, context={'request': request})
         if serializer.is_valid():
             team = serializer.save()
             user = teamUser.objects.create(user = request.user, teamSpace = team)
@@ -41,8 +41,35 @@ class teamSpaceView(APIView):
             tSpaces.append(user.teamSpace)
         serializer = teamSpaceSerializer(tSpaces, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'teamToken': openapi.Schema(type=openapi.TYPE_STRING),
+            }
+        ),
+        responses={
+            status.HTTP_204_NO_CONTENT: "Successfully left the team space.",
+            status.HTTP_403_FORBIDDEN: "You do not have permission to delete this team space.",
+            status.HTTP_404_NOT_FOUND: "Team space not found.",
+        }
+    )
+    def delete(self, request):
+        try:
+            team_space = teamSpace.objects.get(teamToken=request.data['teamToken'])
+        except teamSpace.DoesNotExist:
+            return Response({"error": "Team space not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        if team_space.user == request.user:
+            team_space.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return Response({"error": "You do not have permission to delete this team space."}, status=status.HTTP_403_FORBIDDEN)
+
 
 class teamUserView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('teamToken', openapi.IN_QUERY, description="Team Token", type=openapi.TYPE_STRING)
@@ -59,6 +86,33 @@ class teamUserView(APIView):
         userList = [user.user for user in users]  # 이름들을 추출
         serializer = CustomUserSerializer(userList, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'teamToken': openapi.Schema(type=openapi.TYPE_STRING),
+            }
+        ),
+        responses={
+            status.HTTP_204_NO_CONTENT: "Successfully left the team.",
+            status.HTTP_400_BAD_REQUEST: "Team owner cannot leave the team.",
+            status.HTTP_404_NOT_FOUND: "You are not a member of this team or Team does not exist.",
+        }
+    )
+    def delete(self, request):
+        try:
+            teamToken = request.data['teamToken']
+            team = teamSpace.objects.get(teamToken=teamToken)
+            tUser = teamUser.objects.get(user=request.user, teamSpace=team)
+            if team.user == request.user:
+                return Response({"detail": "Team owner cannot leave the team."}, status=status.HTTP_400_BAD_REQUEST)
+            tUser.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except teamUser.DoesNotExist:
+            return Response({"detail": "You are not a member of this team."}, status=status.HTTP_404_NOT_FOUND)
+        except teamSpace.DoesNotExist:
+            return Response({"detail": "Team does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class joinTeamSpaceView(APIView):
@@ -89,7 +143,7 @@ class joinTeamSpaceView(APIView):
             return Response({'error': 'Team space not found'}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+    
 
 class teamSpaceLodgingView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: lodgingMainSerializer})
