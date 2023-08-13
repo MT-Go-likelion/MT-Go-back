@@ -99,11 +99,21 @@ MIDDLEWARE = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',  # PATCH 메서드 추가
+    'POST',
+    'PUT',
+]
+
 # 특정 도메인만 허용하고자 하는 경우 (배포 시 사용할 것을 권장합니다.)
 # CORS_ALLOWED_ORIGINS = [
 #     "http://example.com",
 #     "https://example.com",
 # ]
+
 
 ROOT_URLCONF = 'MT_Goo.urls'
 
