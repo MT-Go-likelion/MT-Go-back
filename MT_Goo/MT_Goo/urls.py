@@ -17,7 +17,6 @@ schema_view = get_schema_view(
     ), 
     public=True, 
     permission_classes=(permissions.AllowAny,), 
-    url=settings.API_URL,
 )
 urlpatterns = [
     path('admin/', admin.site.urls),
