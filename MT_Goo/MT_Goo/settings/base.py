@@ -87,14 +87,15 @@ SWAGGER_SETTINGS = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # 이 부분을 앞쪽으로 이동
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
+
 # 모든 도메인에서 온 요청을 허용하고자 하는 경우 (개발 시 편리합니다. 실제 배포 시 '*' 대신 특정 도메인을 설정해야 합니다.)
 
 CORS_ALLOW_ALL_ORIGINS = True
