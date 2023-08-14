@@ -99,14 +99,15 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
     mainPhoto = serializers.SerializerMethodField()
     scrapCount = serializers.SerializerMethodField()
     isScrap = serializers.SerializerMethodField()
-
+    avgScore = serializers.SerializerMethodField()
+    reviewCount = serializers.SerializerMethodField()
     class Meta:
         model = lodgingMain
         fields = ['pk', 'name', 'address', 'place', 'peakWeekendPrice', 'peakWeekdayPrice', 
                   'lowWeekendPrice', 'lowWeekdayPrice', 'phoneNumber',
                   'homePageURL', 'headCount',
                   'amenities', 'content', 'precaution', 'checkInTime', 'checkOutTime',
-                  'mainPhoto', 'photos', 'scrapCount', 'isScrap']
+                  'mainPhoto', 'photos', 'scrapCount', 'isScrap', 'avgScore', 'reviewCount']
 
     def get_mainPhoto(self, lodging):
         if lodging.mainPhoto:
@@ -131,7 +132,25 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
                 pass
 
         return None  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
-
+    
+    def get_avgScore(self, obj):
+        # 숙소에 연결된 리뷰들의 점수 평균 계산
+        reviews = review.objects.filter(lodging=obj)
+        if reviews.exists():
+            total_score = sum(review.score for review in reviews)
+            avgScore = total_score / reviews.count()
+            avgScore_rounded = round(avgScore, 1)  # 소수점 첫째 자리까지 반올림
+            return avgScore_rounded
+        else:
+            return 0
+        
+    def get_reviewCount(self, obj):
+        reviews = review.objects.filter(lodging=obj)
+        if reviews.exists():
+            count = reviews.count()
+            return count
+        else: 
+            return 0
 
 class lodgingCreateSerializer(serializers.ModelSerializer):
     photos = lodgingPhotoSerializer(many=True, required=False)
