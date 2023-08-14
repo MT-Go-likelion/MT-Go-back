@@ -131,7 +131,8 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
             except lodgingScrap.DoesNotExist:
                 pass
 
-        return None  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
+            return False  # 토큰이 유효하지 않거나 스크랩 레코드가 없는 경우 None을 반환
+        return None
     
     def get_avgScore(self, obj):
         # 숙소에 연결된 리뷰들의 점수 평균 계산
