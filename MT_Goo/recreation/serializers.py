@@ -4,9 +4,10 @@ from .models import recreationMain, recreationScrap
 class recreationMainSerializer(serializers.ModelSerializer):
     isScrap = serializers.SerializerMethodField()
     photo = serializers.SerializerMethodField()
+    scrapCount = serializers.SerializerMethodField()
     class Meta:
         model = recreationMain
-        fields = ['pk', 'name', 'photo', 'headCountMin', 'headCountMax', 'isScrap']
+        fields = ['pk', 'name', 'photo', 'headCountMin', 'headCountMax', 'scrapCount','isScrap']
 
     def get_isScrap(self, recreation):
         # 현재 로그인한 유저 정보 가져오기
@@ -26,7 +27,14 @@ class recreationMainSerializer(serializers.ModelSerializer):
         if recreation.photo:
             return recreation.photo.url
         else:
-            return None
+            return 0
+        
+    def get_scrapCount(self, recreation):
+        if self.get_isScrap(recreation):  # 스크랩이 참인 경우에만 스크랩 수를 세어 반환
+            return recreation.recreationScrap.count()
+        else:
+            return 0  # 스크랩이 참이 아닌 경우에는 None 반환
+
 
 class recreationDetailSerializer(serializers.ModelSerializer):
     isScrap = serializers.SerializerMethodField()
