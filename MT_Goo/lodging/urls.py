@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import lodgingMainView, createLodgingView, lodgingDetailView, createReviewView, lodgingScrapView, lodgingReviewListView, myPageLodgingScrapView, editReviewView
+from .views import lodgingMainView, createLodgingView, lodgingDetailView, createReviewView, lodgingScrapView, lodgingReviewListView, myPageLodgingScrapView, editReviewView, mainPageLodgingView
 
 urlpatterns = [
     path('main/', lodgingMainView.as_view(), name='lodgingMain'),
@@ -10,4 +10,5 @@ urlpatterns = [
     path('review/<int:pk>/', editReviewView.as_view(), name='reviewMain'),
     path('scrap/', lodgingScrapView.as_view(), name='createScrap'),
     path('scrapList/', myPageLodgingScrapView.as_view(), name='myPageLodgingScrap'),
+    path('mainPage/', mainPageLodgingView.as_view(), name='mainPageLodging'),
 ]

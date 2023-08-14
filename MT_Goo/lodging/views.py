@@ -13,33 +13,11 @@ from rest_framework.pagination import PageNumberPagination
 from django.core.serializers import serialize
 from drf_yasg.openapi import Response as OpenApiResponse
 from MT_Goo.pagination import lodingListPagination, reviewListPagination
-from django.db.models import Q
+from django.db.models import Count
+from django.db.models import Count, Q
 
 class createLodgingView(APIView):
-    @swagger_auto_schema(request_body=openapi.Schema(
-        type=openapi.TYPE_OBJECT,
-        properties={
-            'name': openapi.Schema(type=openapi.TYPE_STRING),
-            'address': openapi.Schema(type=openapi.TYPE_STRING),
-            'place': openapi.Schema(type=openapi.TYPE_STRING),
-            'price': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'phoneNumber': openapi.Schema(type=openapi.TYPE_STRING),
-            'homePageURL': openapi.Schema(type=openapi.TYPE_STRING),
-            'amenities': openapi.Schema(type=openapi.TYPE_STRING),
-            'headCount': openapi.Schema(type=openapi.TYPE_INTEGER),
-            'content': openapi.Schema(type=openapi.TYPE_STRING),
-            'precaution': openapi.Schema(type=openapi.TYPE_STRING),
-            'checkInTime': openapi.Schema(type=openapi.TYPE_STRING),
-            'checkOutTime': openapi.Schema(type=openapi.TYPE_STRING),
-            'mainPhoto': openapi.Schema(type=openapi.TYPE_FILE),
-            'photos': openapi.Schema(
-                type=openapi.TYPE_ARRAY,
-                items=openapi.Schema(type=openapi.TYPE_FILE)
-            ),
-        },
-        required=['name', 'address', 'place', 'price', 'phoneNumber', 'homePageURL',
-                  'headCount', 'content', 'precaution', 'checkInTime', 'checkOutTime', 'mainPhoto']
-    ))
+    @swagger_auto_schema(request_body=lodgingCreateSerializer)
     def post(self, request, format=None):
         serializer = lodgingCreateSerializer(data=request.data)
         if serializer.is_valid():
@@ -300,4 +278,12 @@ class myPageLodgingScrapView(APIView):
             lodgings.append(lodgingMain.objects.get(pk=scrap.lodging.pk))
         serializer = lodgingMainSerializer(
             lodgings, many=True, context={'request': request})
+        return Response(serializer.data)
+
+class mainPageLodgingView(APIView):
+    def get(self, request, format=None):
+        top_lodgings = lodgingMain.objects.annotate(scrap_count=Count('lodgingScrap', filter=Q(lodgingScrap__isScrap=True))).order_by('-scrap_count')[:10]
+        serializer = lodgingMainSerializer(
+            top_lodgings, many=True, context={'request': request})
+        
         return Response(serializer.data)

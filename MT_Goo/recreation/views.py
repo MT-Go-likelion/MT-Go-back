@@ -12,6 +12,7 @@ from accounts.models import CustomUser
 from drf_yasg.openapi import Response as OpenApiResponse
 from rest_framework.pagination import PageNumberPagination
 from MT_Goo.pagination import recreationListPagination
+from django.db.models import Count, Q
 
 class createRecreationView(APIView):
     # permission_classes = [IsAuthenticated]  # 인증된 사용자만 리뷰를 작성할 수 있도록 설정합니다.
@@ -133,4 +134,13 @@ class myPageRecreationScrapView(APIView):
                 recreationMain.objects.get(pk=scrap.recreation.pk))
         serializer = recreationMainSerializer(
             recreations, many=True, context={'request': request})
+        return Response(serializer.data)
+
+class mainPageRecreationView(APIView):
+    def get(self, request, format=None):
+        top_recreations = recreationMain.objects.annotate(scrap_count=Count('recreationScrap', filter=Q(recreationScrap__isScrap=True))).order_by('-scrap_count')[:10]
+        
+        serializer = recreationMainSerializer(
+            top_recreations, many=True, context={'request': request})
+        
         return Response(serializer.data)
