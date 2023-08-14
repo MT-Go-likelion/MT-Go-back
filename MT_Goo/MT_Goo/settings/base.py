@@ -97,7 +97,7 @@ CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
     'OPTIONS',
-    'PATCH',  # PATCH 메서드 추가
+    'PATCH',
     'POST',
     'PUT',
 ]

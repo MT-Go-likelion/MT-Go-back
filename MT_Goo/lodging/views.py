@@ -13,7 +13,7 @@ from rest_framework.pagination import PageNumberPagination
 from django.core.serializers import serialize
 from drf_yasg.openapi import Response as OpenApiResponse
 from MT_Goo.pagination import lodingListPagination, reviewListPagination
-
+from django.db.models import Q
 
 class createLodgingView(APIView):
     @swagger_auto_schema(request_body=openapi.Schema(
@@ -68,13 +68,26 @@ class lodgingMainView(APIView):
     def get(self, request, format=None):
         lodgings = lodgingMain.objects.all()
 
+        place = request.query_params.get('place')
+        if place:
+            lodgings = lodgings.filter(place__icontains=place)
+        
+        min_headCount = request.query_params.get('minheadCount')
+        max_headCount = request.query_params.get('maxheadCount')
+        if min_headCount and max_headCount:
+            lodgings = lodgings.filter(headCount__gte=int(min_headCount), headCount__lte=int(max_headCount))
+    
+        min_lowWeekdayPrice = request.query_params.get('minlowWeekdayPrice')
+        max_lowWeekdayPrice = request.query_params.get('maxlowWeekdayPrice')
+        if max_lowWeekdayPrice and max_lowWeekdayPrice:
+            lodgings = lodgings.filter(lowWeekdayPrice__gte=int(min_lowWeekdayPrice), lowWeekdayPrice__lte=int(max_lowWeekdayPrice))
+
         paginator = lodingListPagination()
         paginated_lodgings = paginator.paginate_queryset(lodgings, request)
 
         serializer = lodgingMainSerializer(
             paginated_lodgings, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
-
 
 class lodgingDetailView(APIView):
     @swagger_auto_schema(responses={status.HTTP_200_OK: lodgingDetailSerializer})
