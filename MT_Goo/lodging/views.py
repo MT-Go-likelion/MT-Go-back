@@ -58,6 +58,16 @@ class lodgingMainView(APIView):
 
     @swagger_auto_schema(
         manual_parameters=[
+            openapi.Parameter('place', openapi.IN_QUERY,
+                              description="Place name for lodging search", type=openapi.TYPE_STRING),
+            openapi.Parameter('minheadCount', openapi.IN_QUERY,
+                              description="Minimum head count for lodging search", type=openapi.TYPE_INTEGER),
+            openapi.Parameter('maxheadCount', openapi.IN_QUERY,
+                              description="Maximum head count for lodging search", type=openapi.TYPE_INTEGER),
+            openapi.Parameter('minlowWeekdayPrice', openapi.IN_QUERY,
+                              description="Minimum low weekday price for lodging search", type=openapi.TYPE_INTEGER),
+            openapi.Parameter('maxlowWeekdayPrice', openapi.IN_QUERY,
+                              description="Maximum low weekday price for lodging search", type=openapi.TYPE_INTEGER),
             openapi.Parameter('page', openapi.IN_QUERY,
                               description="Page number", type=openapi.TYPE_INTEGER),
         ],
