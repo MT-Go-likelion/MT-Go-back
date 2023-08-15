@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, suggestion
 
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,6 +26,18 @@ class LoginSerializer(serializers.Serializer):
         else:
             raise serializers.ValidationError('Incorrect credentials. Please try again.')
         return data
+    
+class suggestionSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(source='user.email')
+
+    class Meta:
+        model = suggestion
+        fields = ['user', 'content', 'createdAt']
+
+    def create(self, validated_data):
+        user = self.context.get('request').user
+        suggestion_obj = suggestion.objects.create(user=user, **validated_data)
+        return suggestion_obj
     
 class DummySerializer(serializers.Serializer):
     pass
