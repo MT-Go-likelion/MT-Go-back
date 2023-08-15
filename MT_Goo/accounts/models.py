@@ -37,3 +37,9 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+    
+
+class suggestion(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField()
+    createdAt = models.DateTimeField(auto_now_add=True) 
