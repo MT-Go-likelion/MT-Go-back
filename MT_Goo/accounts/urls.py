@@ -6,5 +6,5 @@ urlpatterns = [
     path('user/signin/', LoginView.as_view(), name='signin'),
     path('user/signout/', LogoutView.as_view(), name='signout'),
     path('user/<int:pk>/', UserRetrieveUpdateDestroyView.as_view(), name='detail'),
-    path('suggestion/create/', suggestionView.as_view(), name='suggestionCreate'),
+    path('suggestion/', suggestionView.as_view(), name='suggestion'),
 ]
