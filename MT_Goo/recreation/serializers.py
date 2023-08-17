@@ -30,11 +30,8 @@ class recreationMainSerializer(serializers.ModelSerializer):
             return 0
         
     def get_scrapCount(self, recreation):
-        if self.get_isScrap(recreation):  # 스크랩이 참인 경우에만 스크랩 수를 세어 반환
-            return recreation.recreationScrap.count()
-        else:
-            return 0  # 스크랩이 참이 아닌 경우에는 None 반환
-
+        return recreation.recreationScrap.filter(isScrap=True).count()
+  
 
 class recreationDetailSerializer(serializers.ModelSerializer):
     isScrap = serializers.SerializerMethodField()

@@ -56,17 +56,6 @@ REST_FRAMEWORK = {
     # 'DEFAULT_SEARCH_FIELDS': ['name', 'address', 'place'],  # 검색할 필드 지정
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=15),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=15),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=30),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=15),
-}
-
 
 TOKEN_EXPIRED_AFTER_SECONDS = 604800  # 1주일 (60 * 60 * 24 * 7)
 

@@ -25,13 +25,10 @@ class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_update(self, serializer):
         if 'password' in self.request.data:
-            # 새로운 비밀번호를 입력한 경우에만 비밀번호를 변경하도록 설정
             new_password = self.request.data.get('password')
-            hashed_password = make_password(new_password)
-            serializer.save(password=hashed_password)
-        else:
-            serializer.save()
-
+            # 비밀번호를 해싱하여 저장하는 대신, set_password() 메서드 사용
+            serializer.instance.set_password(new_password)
+        serializer.save()
 
 class LoginView(generics.GenericAPIView):
     serializer_class = LoginSerializer
@@ -45,8 +42,17 @@ class LoginView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
-        # Token 객체의 objects 속성을 사용합니다.
-        token, created = Token.objects.get_or_create(user=user)
+
+        # 기존 토큰 삭제
+        try:
+            old_token = Token.objects.get(user=user)
+            old_token.delete()
+        except Token.DoesNotExist:
+            pass
+
+        # 새로운 토큰 생성
+        token = Token.objects.create(user=user)
+
         return Response({'token': token.key, 'name': user.name, 'email': user.email, 'pk': user.pk})
 
 
