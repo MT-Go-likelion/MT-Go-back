@@ -53,7 +53,18 @@ class LoginView(generics.GenericAPIView):
         # 새로운 토큰 생성
         token = Token.objects.create(user=user)
 
-        return Response({'token': token.key, 'name': user.name, 'email': user.email, 'pk': user.pk})
+        response_data = {
+            'token': token.key,
+            'name': user.name,
+            'email': user.email,
+            'pk': user.pk,
+        }
+
+
+        # is_staff 값이 True인 경우에도 isStaff 정보를 응답에 추가
+        response_data['isStaff'] = user.is_staff
+
+        return Response(response_data)
 
 
 class LogoutView(generics.GenericAPIView):
