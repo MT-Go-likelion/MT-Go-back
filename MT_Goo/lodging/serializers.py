@@ -140,7 +140,7 @@ class lodgingDetailSerializer(serializers.ModelSerializer):
         if reviews.exists():
             total_score = sum(review.score for review in reviews)
             avgScore = total_score / reviews.count()
-            avgScore_rounded = round(avgScore, 1)  # 소수점 첫째 자리까지 반올림
+            avgScore_rounded = (float)(round(avgScore, 1))  # 소수점 첫째 자리까지 반올림
             return avgScore_rounded
         else:
             return 0
