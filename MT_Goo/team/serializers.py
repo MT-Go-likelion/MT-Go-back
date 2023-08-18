@@ -5,7 +5,7 @@ from lodging.models import lodgingMain
 class teamSpaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = teamSpace
-        fields = ['pk', 'teamName', 'teamToken']
+        fields = ['pk', 'teamName', 'teamToken', 'user']
     def create(self, validated_data):
         # validated_data로 받은 데이터를 사용하여 teamSpace 객체 생성
         user = self.context['request'].user
