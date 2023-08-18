@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import teamSpaceSerializer,teamUserSerializer, teamLodgingScrapSerializer, teamRecreationScrapSerializer, createTeamShoppingSerializer, teamShoppingScrapSerializer, teamScrapListSerializer
+from .serializers import teamSpaceSerializer,teamUserSerializer, teamLodgingScrapSerializer, teamRecreationScrapSerializer, createTeamShoppingSerializer, teamShoppingScrapSerializer, teamScrapListSerializer, getTeamSpaceSerializer
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.authentication import TokenAuthentication
@@ -39,7 +39,7 @@ class teamSpaceView(APIView):
         tSpaces = []
         for user in tUsers:
             tSpaces.append(user.teamSpace)
-        serializer = teamSpaceSerializer(tSpaces, many=True)
+        serializer = getTeamSpaceSerializer(tSpaces, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     @swagger_auto_schema(
         request_body=openapi.Schema(
