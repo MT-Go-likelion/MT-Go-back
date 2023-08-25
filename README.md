@@ -1,4 +1,3 @@
-MT-Goo Back
 # MTGO Front
 
 <div align=center>
